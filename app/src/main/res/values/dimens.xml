@@ -1,0 +1,15 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="standardPadding">16dp</dimen>
+    <dimen name="albumIconSize">70dp</dimen>
+    <dimen name="titleBarHeight">100dp</dimen>
+    <dimen name="titleBarLogoHeight">70dp</dimen>
+    <dimen name="cornerRadius">4dp</dimen>
+    <dimen name="fieldHeight">50dp</dimen>
+    <dimen name="titleLogoWidth">200dp</dimen>
+    <dimen name="processSize">70dp</dimen>
+    <dimen name="lineWidth">1dp</dimen>
+
+</resources>
