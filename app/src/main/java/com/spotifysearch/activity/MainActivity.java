@@ -2,15 +2,19 @@ package com.spotifysearch.activity;
 
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -29,7 +33,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
 
     private static final long ANMATION_TIME = 2000;
     private static final long VIEW_WIDTH_ANIMATION = 300;
@@ -44,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
     private RelativeLayout.LayoutParams mLayoutParams;
     private int mViewId = 1;
+    private String mLastSearch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,14 +72,53 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+        // Fade in the logo
+        mTitlebarContainer.getViewTreeObserver().addOnGlobalLayoutListener(mOnGlobalLayoutListener);
+    }
+
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        mTitlebarContainer.getViewTreeObserver().addOnGlobalLayoutListener(mOnGlobalLayoutListener);
+    }
+
+    private ViewTreeObserver.OnGlobalLayoutListener mOnGlobalLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
+        @Override
+        public void onGlobalLayout() {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN ) {
+                mTitlebarContainer.getViewTreeObserver().removeGlobalOnLayoutListener(mOnGlobalLayoutListener);
+            } else {
+                mTitlebarContainer.getViewTreeObserver().removeOnGlobalLayoutListener(mOnGlobalLayoutListener);
+            }
+            mLogo.setAlpha(0.0f);
+            mLogo.animate()
+                    .alpha(1.0f)
+                    .setDuration(ANMATION_TIME);
+            if (showingSearch()) {
+                openSearch();
+            }
+        }
+    };
+
+    private boolean showingSearch() {
+        return mSearchEditText.getVisibility() == View.VISIBLE;
     }
 
     @OnClick(R.id.search)
     public void onSearch() {
-        if (mSearchEditText.getVisibility() == View.VISIBLE) {
+        if (showingSearch()){
             final String searchPhrase = mSearchEditText.getText().toString().trim();
 
             if (!TextUtils.isEmpty(searchPhrase)) {
+
+                if (mLastSearch != null && mLastSearch.equals(searchPhrase)) {
+                    closeSearch(null);
+                    hideKeyboard();
+                    return;
+                }
+                mLastSearch = searchPhrase;
+
                 hideKeyboard();
                 closeSearch(new Runnable() {
                     @Override
@@ -93,6 +137,9 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 });
+            } else {
+                closeSearch(null);
+                hideKeyboard();
             }
         } else {
             openSearch();
@@ -106,13 +153,15 @@ public class MainActivity extends AppCompatActivity {
                     .commit();
     }
 
-    private void closeSearch(final Runnable onDone) {
+    private void closeSearch(@Nullable final Runnable onDone) {
         mSearchButton.setEnabled(false);
         hideEdit(mSearchButton.getLeft() - mTitleLogo.getRight(), new Runnable() {
             @Override
             public void run() {
                 mSearchButton.setEnabled(true);
-                onDone.run();
+                if (onDone != null) {
+                    onDone.run();
+                }
             }
         });
     }
@@ -123,7 +172,6 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 mSearchButton.setEnabled(true);
                 showKeyboard(mSearchEditText);
-
             }
         });
     }
@@ -147,6 +195,15 @@ public class MainActivity extends AppCompatActivity {
         mLayoutParams.width = width;
         mLayoutParams.leftMargin = mSearchButton.getLeft() - width;
         mSearchEditText.setLayoutParams(mLayoutParams);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (showingSearch()) {
+            closeSearch(null);
+            return;
+        }
+        super.onBackPressed();
     }
 
     public void showEdit(int width, final Runnable onDone) {

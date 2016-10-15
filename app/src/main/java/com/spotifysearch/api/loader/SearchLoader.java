@@ -41,10 +41,10 @@ public class SearchLoader extends BaseLoader<SpotifyAlbums> {
             if (response.isSuccessful()) {
                 return response.body().albums;
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         return null;
     }
 

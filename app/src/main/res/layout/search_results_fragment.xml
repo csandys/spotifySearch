@@ -3,7 +3,7 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:gravity="center_horizontal"
-              android:background="@android:color/white"
+              android:background="@color/spotifyBgk"
               android:orientation="vertical">
 
 
@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:background="@color/gray"
+        android:background="@color/spotifyBgk"
         android:orientation="horizontal">
 
         <ImageButton
@@ -19,7 +19,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="@dimen/standardPadding"
-            android:background="@color/gray"
+            android:background="@android:color/transparent"
             android:src="@drawable/delete_btn"
             />
 
