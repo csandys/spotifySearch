@@ -56,10 +56,6 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        mLogo.animate()
-             .alpha(1.0f)
-             .setDuration(ANMATION_TIME);
-
         mLayoutParams = (RelativeLayout.LayoutParams) mSearchEditText.getLayoutParams();
 
         mSearchEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -129,7 +125,6 @@ public class MainActivity extends Activity {
                             FrameLayout frameLayout = new FrameLayout(MainActivity.this);
                             frameLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                             frameLayout.setId(mViewId);
-                            frameLayout.setBackgroundColor(Color.BLUE);
                             mSearchResultsContainer.addView(frameLayout, 0);
                             addFragment(mViewId, fragment);
                             mViewId++;
